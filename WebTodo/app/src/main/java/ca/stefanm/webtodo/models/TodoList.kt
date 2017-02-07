@@ -7,6 +7,7 @@ import android.support.annotation.Keep
  */
 @Keep
 data class TodoList(
+        var title : String = "",
         var items : Array<TodoItem> = arrayOf(),
         var collaborators : Array<User> = arrayOf()
 )

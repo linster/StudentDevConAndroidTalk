@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">WebTodo</string>
     <string name="shared_pref_filename" translatable="false">shared_preferences</string>
+    <string name="api_url">http://localhost:8000/</string>
 </resources>

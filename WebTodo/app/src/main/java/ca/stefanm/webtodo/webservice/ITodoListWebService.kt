@@ -3,6 +3,7 @@ package ca.stefanm.webtodo.webservice
 
 import ca.stefanm.webtodo.models.TodoItem
 import ca.stefanm.webtodo.models.TodoList
+import ca.stefanm.webtodo.models.User
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -58,11 +59,8 @@ interface ITodoListWebService {
 
 
 
-
     /* Deletion. The server will do the permissions check. */
-    @DELETE("todoList/{id}")
-    fun deleteTodoListById(@Path("id") id: Int)
-
     @DELETE("todoItem/{id}")
     fun deleteTodoItemById(@Path("id") id: Int)
+
 }
