@@ -7,16 +7,16 @@ import retrofit2.Retrofit
 
 /**
  * This is a singleton that gives us an HTTP Client + JSON parser as discussed in the comments
- * in ITodoListWebService.
+ * in TodoListWebService.
  *
- * The getClient() method returns an object that implements the ITodoListWebService interface. The
+ * The getClient() method returns an object that implements the TodoListWebService interface. The
  * object returned, has implementations for the methods that do the web request, populating the body,
  * trapping exceptions, performing the request, and parsing the response.
  */
 
 object TodoListWebServiceClient{
 
-    fun getClient(context: Context) : ITodoListWebService {
+    fun getClient(context: Context) : TodoListWebService {
         var retrofit = Retrofit.Builder()
                 .baseUrl(context.applicationContext.getString(R.string.api_url))
                 .client(OkHttpClient())
@@ -24,7 +24,7 @@ object TodoListWebServiceClient{
 
         //TODO JWT?! in headers
 
-        return retrofit.create(ITodoListWebService::class.java)
+        return retrofit.create(TodoListWebService::class.java)
     }
 
 }

@@ -11,5 +11,5 @@ data class TodoItem(
         var completed : Boolean = false,
         var contents : String = "",
         var modifiedOn : Date = Date(),
-        var creator : User?
+        var creator : User
 )

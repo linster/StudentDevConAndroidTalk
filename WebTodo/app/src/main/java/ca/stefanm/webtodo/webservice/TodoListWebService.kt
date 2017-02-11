@@ -26,7 +26,7 @@ import retrofit2.http.*
  *
  * Note that this interface should match what your server gives out as results.
  */
-interface ITodoListWebService {
+internal interface TodoListWebService {
 
 
     /* We want to implement a CRUD interface for todolists as well as todo items.

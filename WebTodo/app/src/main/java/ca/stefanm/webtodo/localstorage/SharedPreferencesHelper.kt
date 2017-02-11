@@ -18,7 +18,7 @@ import com.squareup.moshi.Moshi
  * file containing key-value pairs and provides simple methods to read and write them.
  * Each SharedPreferences file is managed by the framework and can be private or shared.
  */
-object SharedPreferencesHelper {
+internal object SharedPreferencesHelper {
     private val sharedPreferenceFile : String = "shared_preferences"
 
     fun setObject(context : Context, item : Any, key : String) : Unit {

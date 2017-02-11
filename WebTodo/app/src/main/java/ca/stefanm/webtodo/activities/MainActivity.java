@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
 //Could do a todo item editor activity via explicit intent.
 
 
-//TODO permission request on load.
+//TODO permission request on load. (Maybe in login screen??)
 
 //Main Activity has a list of TodoItems.
 
