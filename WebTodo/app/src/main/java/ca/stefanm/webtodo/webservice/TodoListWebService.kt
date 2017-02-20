@@ -26,41 +26,35 @@ import retrofit2.http.*
  *
  * Note that this interface should match what your server gives out as results.
  */
-internal interface TodoListWebService {
+interface TodoListWebService {
 
 
-    /* We want to implement a CRUD interface for todolists as well as todo items.
+    /* We want to implement a CRUD interface for todo items.
+     * To limit scope creep, creating and deleting multiple todo lists is not part
+     * of this example project: we just assume there is only one global todo list
+     * that the server cares about.
      *
      * CRUD: Create, Read, Update, Delete
      */
 
     //Create
-    @POST("todoList/{listId}/new")
-    fun postNewTodoItemToList(@Body todoItem: TodoItem)
-
-    @POST("todoList/new")
-    fun createNewTodoList(@Body todoList: TodoList)
-
+    @POST("todo/new")
+    fun postNewTodoItemToList(@Body todoItem: TodoItem) : Call<TodoList>
 
     //Read
-    @GET("todoList/{id}")
-    fun getTodoListById(@Path("id") id : Int) : Call<TodoList>
+    @GET("todo/")
+    fun getAllTodoItems() : Call<List<TodoItem>>
 
-    @GET("toodoItem/{id}")
-    fun getTodoItemById(@Path("Id") id : Int) : Call<TodoItem>
-
-    @POST("todoList")
-    fun uploadNewTodoListToServer(@Body todoList: TodoList)
+    @GET("todo/{id}")
+    fun getTodoItemById(@Path("id") id : Int) : Call<TodoItem>
 
 
     //Update
-    @PUT("todoList/{listId}")
-    fun updateExistingTodoItemInList(@Body todoItem: TodoItem)
+    @PUT("todo/{id}")
+    fun updateTodoItemById(@Path("id") id : Int) : Call<TodoItem>
 
-
-
-    /* Deletion. The server will do the permissions check. */
-    @DELETE("todoItem/{id}")
-    fun deleteTodoItemById(@Path("id") id: Int)
+    /* Deletion.*/
+    @DELETE("todo/{id}")
+    fun deleteTodoItemById(@Path("id") id: Int) : Call<TodoList>
 
 }

@@ -8,7 +8,5 @@ import android.support.annotation.Keep
 @Keep
 data class User(
         val username : String = "",
-        val friendlyName : String = "",
-        val email : String = "",
         val authToken : String? /* The server does not send this to other collaborators */
 )

@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:text="TextView"
+        android:text="@string/todoitem_default_short_contents"
         android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:id="@+id/tv_contents_short"
@@ -28,7 +28,7 @@
         app:layout_constraintLeft_toLeftOf="parent" />
 
     <TextView
-        android:text="Jan 01, 1970"
+        android:text="@string/todoitem_default_date"
         android:layout_width="154dp"
         android:layout_height="23dp"
         android:id="@+id/tv_modified"
@@ -38,7 +38,7 @@
         android:layout_marginStart="8dp" />
 
     <TextView
-        android:text="Username"
+        android:text="@string/todoitem_default_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tv_userName"

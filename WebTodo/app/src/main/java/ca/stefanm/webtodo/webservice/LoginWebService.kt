@@ -24,7 +24,7 @@ import retrofit2.http.*
  * For login, after the account has been created on the server, a similar flow happens.
  *
  */
-internal interface LoginWebService {
+interface LoginWebService {
 
 
     @POST("login/register")

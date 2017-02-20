@@ -1,0 +1,15 @@
+{
+  "name": "todowebservicemvp",
+  "version": "1.0.0",
+  "description": "An MVP todo list web service for Student Dev Con 2017. An Android app is the client for this API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Stefan Martynkiw",
+  "license": "MPL-2.0",
+  "dependencies": {
+    "express": "^4.14.1",
+    "express-jwt": "^5.1.0"
+  }
+}

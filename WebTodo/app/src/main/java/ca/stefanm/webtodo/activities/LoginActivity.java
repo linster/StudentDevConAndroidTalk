@@ -10,6 +10,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemClick;
 import ca.stefanm.webtodo.R;
+import ca.stefanm.webtodo.models.User;
+import ca.stefanm.webtodo.webservice.LoginWebServiceClient;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -30,11 +32,14 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.btn_login)
     public void login(){
 
+        User user = new User(username.getText().toString(), "");
+        LoginWebServiceClient.INSTANCE.loginExistingUser(this, user, password.getText().toString());
     }
 
     @OnClick(R.id.b_register)
     public void register() {
-
+        User user = new User(username.getText().toString(), "");
+        LoginWebServiceClient.INSTANCE.registerNewUser(this, user, password.getText().toString());
     }
 
     /**
@@ -70,3 +75,10 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 }
+
+
+
+//TODO permission request on load. (Maybe in login screen??)
+
+//network permission
+//local storage?

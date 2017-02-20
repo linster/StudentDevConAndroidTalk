@@ -65,7 +65,7 @@ public class TodoItemListAdapter extends ArrayAdapter<TodoItem> {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM d, yyyy");
         tv_modified.setText(simpleDateFormat.format(todoItem.getModifiedOn()));
 
-        tv_username.setText(todoItem.getCreator().getFriendlyName());
+        tv_username.setText(todoItem.getCreator().getUsername());
 
         cb_completed.setChecked(todoItem.getCompleted());
 
