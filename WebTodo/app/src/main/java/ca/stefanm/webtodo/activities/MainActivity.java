@@ -13,6 +13,7 @@ import butterknife.BindView;
 import butterknife.OnItemClick;
 import butterknife.OnItemLongClick;
 import ca.stefanm.webtodo.R;
+import ca.stefanm.webtodo.models.TodoItem;
 import ca.stefanm.webtodo.models.TodoList;
 import ca.stefanm.webtodo.webservice.TodoListWebServiceClient;
 import hugo.weaving.DebugLog;
@@ -73,7 +74,9 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
             Log.d(TAG, "Task");
             try {
-                TodoList todoList = TodoListWebServiceClient.INSTANCE.getClient(MainActivity.this).getTodoListById(1).execute().body();
+                TodoList todoList =
+                        TodoListWebServiceClient.INSTANCE.getClient(MainActivity.this)
+                                .postNewTodoItemToList(new TodoItem(1, true, "test", 0L, null)).execute().body();
                 Log.d(TAG, todoList.toString());
             } catch (IOException e) {
                 e.printStackTrace();
