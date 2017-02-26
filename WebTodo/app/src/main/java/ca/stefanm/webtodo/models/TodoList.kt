@@ -21,5 +21,5 @@ data class TodoList(
 
         //val id : Int = 1,
         //var title : String = "",
-        var items : ArrayList<TodoItem> = ArrayList<TodoItem>()
+        var items : MutableList<TodoItem> = ArrayList<TodoItem>()
 )

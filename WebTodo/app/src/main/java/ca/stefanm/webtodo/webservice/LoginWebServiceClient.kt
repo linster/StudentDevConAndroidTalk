@@ -3,6 +3,7 @@ package ca.stefanm.webtodo.webservice
 import android.content.Context
 import android.util.Base64
 import android.util.Log
+import android.widget.Toast
 import ca.stefanm.webtodo.R
 import ca.stefanm.webtodo.localstorage.Session
 import ca.stefanm.webtodo.models.User
@@ -20,18 +21,52 @@ import java.nio.charset.Charset
 
 object LoginWebServiceClient : IWebServiceClient<LoginWebService> {
 
+    val TAG = "LoginWebServiceClient"
 
     //Need to manipulate the headers and session appropriately.
     //OkHTTP interceptors.
 
     //These should be blocking calls so I can demo AsyncTasks.
-    public fun registerNewUser(context: Context, user: User, desiredPassword : String){
+    public fun registerNewUser(context: Context, user: User, desiredPassword : String) : Boolean{
 
-        val response = getClient(context, userpassTob64Header(user.username, desiredPassword)).registerNewUser(user)
-        //Todo: Exception handling throw exceptions from method.
+        val (body, success) = performBlockingNetworkCall(TAG, getClient(context, userpassTob64Header(user.username, desiredPassword)).registerNewUser(user) )
+
+        if (success && body != null){
+            val returnedUser = body
+
+            if (returnedUser != null){
+                Session(context).currentUser = returnedUser
+                Toast.makeText(context, "User registration & login successful.", Toast.LENGTH_SHORT).show()
+                return true
+            } else {
+                return false
+            }
+        } else {
+            Log.d(TAG, "User registration failed: Response:" + body?.toString())
+            Toast.makeText(context, "User registration failed.", Toast.LENGTH_SHORT).show()
+            return false
+        }
     }
 
-    public fun loginExistingUser(context: Context, user: User, enteredPassword : String){
+    public fun loginExistingUser(context: Context, user: User, enteredPassword : String) : Boolean{
+
+        val (body, success) = performBlockingNetworkCall(TAG, getClient(context, userpassTob64Header(user.username, enteredPassword)).registerNewUser(user) )
+
+        if (success && body != null){
+            val returnedUser = body
+
+            if (returnedUser != null){
+                Session(context).currentUser = returnedUser
+                Toast.makeText(context, "User login successful.", Toast.LENGTH_SHORT).show()
+                return true
+            } else {
+                return false
+            }
+        } else {
+            Log.d(TAG, "User login failed: Response:" + body?.toString())
+            Toast.makeText(context, "User login failed.", Toast.LENGTH_SHORT).show()
+            return false
+        }
 
     }
 
@@ -45,7 +80,7 @@ object LoginWebServiceClient : IWebServiceClient<LoginWebService> {
 
 
     override fun getClient(context: Context): LoginWebService {
-
+        throw NotImplementedError()
     }
 
     //Private methods to get the client

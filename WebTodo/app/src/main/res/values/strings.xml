@@ -1,7 +1,15 @@
 <resources>
     <string name="app_name">WebTodo</string>
     <string name="shared_pref_filename" translatable="false">shared_preferences</string>
-    <string name="api_url">http://localhost:8000/</string>
+
+    <!--This is where we set the base address of the API. When running the app in the Android
+        emulator, use 10.0.2.2 to access "localhost" on your development machine.
+        https://developer.android.com/studio/run/emulator-commandline.html#networkaddresses -->
+
+    <string name="api_url">http://10.0.2.2:8000/</string>
+
+
+
     <string name="todoitem_default_date">Jan 01, 1970</string>
     <string name="todoitem_default_username">Username</string>
     <string name="todoitem_default_short_contents">TextView</string>

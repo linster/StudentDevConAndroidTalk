@@ -9,8 +9,7 @@ app.use(require('morgan')('dev'));
 
 var bodyParser = require('body-parser');
 /* Global body parser */
-var jsonParser = bodyParser.json();
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 
 console.log('Setting up API server.')
@@ -36,29 +35,59 @@ function TodoItem(
 todoList = []
 
 app.post('/todo/new', function(req, res){
-    console.log(req.body)
+
+    //We need to assign an ID number to the new todo item.
+
+    var item = req.body; //Don't actually do this in real life, this is very type-unsafe.
+
+    var maxId = !u.isEmpty(todoList) ? u.max(todoList, function(todoItem){return todoItem.id}).id : -1
+
+    if (!item.id || item.id == 0 || item.id < maxId){
+        item.id = maxId + 1
+    }
+
+    todoList.push(item)
+    console.log(todoList)
+    res.json({items: todoList})
+
 })
 
-app.get('todo/', function(req, res){
-
+app.get('/todo/', function(req, res){
+    res.json(todoList)
 })
 
-app.get('todo/:id', function(req, res){
+app.get('/todo/:id', function(req, res){
     var id = req.params.id;
+
+    res.json(u.find(todoList, function(item){return item.id == id}))
 })
 
-app.put('todo/:id', function(req, res){
+app.put('/todo/:id', function(req, res){
     var id = req.params.id;
+
+    var index = u.indexOf(todoList, u.find(todoList, function(item){return item.id == id}))
+    todoList[index] = req.body
+
+    res.json({items: todoList})
 })
 
-app.delete('todo/:id', function(req, res){
+app.delete('/todo/:id', function(req, res){
     var id = req.params.id;
+
+    var index = u.indexOf(todoList, u.find(todoList, function(item){return item.id == id}))
+
+    todoList[index] = null
+
+    todoList = u.compact(todoList)
+
+    res.json({items: todoList})
+    
 })
 
 
 
 
-var server = app.listen(8080, function () {
+var server = app.listen(8000, function () {
   var host = server.address().address;
   var port = server.address().port;
 

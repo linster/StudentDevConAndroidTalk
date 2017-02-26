@@ -25,6 +25,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 object TodoListWebServiceClient : IWebServiceClient<TodoListWebService>{
 
     override fun getClient(context: Context) : TodoListWebService {
+
         var retrofit = Retrofit.Builder()
                 .baseUrl(context.applicationContext.getString(R.string.api_url))
                 .addConverterFactory(MoshiConverterFactory.create())
@@ -35,7 +36,7 @@ object TodoListWebServiceClient : IWebServiceClient<TodoListWebService>{
                                 val newReq = request.newBuilder()
                                         /* Add the JWT to the request header */
                                         .addHeader("Authorization ",
-                                                "Basic " + Session(context).currentUser.authToken ?: "Og==" /* base64encode(":") */)
+                                                "Basic " + (Session(context).currentUser.authToken ?: "Og==") /* base64encode(":") */)
                                         .build()
                                 val response = chain.proceed(newReq)
                                 response //Implicit return line from lambda.

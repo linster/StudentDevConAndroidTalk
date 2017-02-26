@@ -36,7 +36,7 @@ internal object SharedPreferencesHelper {
             else -> {
                 val moshi = Moshi.Builder().build()
                 sharedPrefEditor.putString(key,
-                        moshi.adapter(item.javaClass).toJson(item))
+                        moshi.adapter(item.javaClass).toJson(item)).commit()
             }
         }
     }

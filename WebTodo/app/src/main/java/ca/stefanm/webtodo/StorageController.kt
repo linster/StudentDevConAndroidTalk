@@ -37,7 +37,7 @@ object StorageController {
 
 
 
-    open fun hasNetwork(context: Context) : Boolean {
+    fun hasNetwork(context: Context) : Boolean {
 
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return connectivityManager?.activeNetworkInfo?.isConnected ?: false
@@ -53,10 +53,11 @@ object StorageController {
             )
         } else {
             val client = TodoListWebServiceClient.getClient(context)
-            val (response, success) = performBlockingNetworkCall(client.getAllTodoItems())
+            val (body, success) = performBlockingNetworkCall(client.getAllTodoItems())
+            Log.d(TAG, "Body: " + body?.toString())
+            if (success && body != null){
+                Session(context).todoList = TodoList(items = body as MutableList<TodoItem>)
 
-            if (success && response != null && response.body() != null){
-                Session(context).todoList.items = response.body() as ArrayList<TodoItem>
                 return StorageControllerResult(
                         data = Session(context).todoList,
                         networkCall = true,
@@ -81,11 +82,11 @@ object StorageController {
             )
         } else {
             val client = TodoListWebServiceClient.getClient(context)
-            val (response, success) = performBlockingNetworkCall(client.getTodoItemById(id))
+            val (body, success) = performBlockingNetworkCall(client.getTodoItemById(id))
 
-            if (success && response != null){
+            if (success && body != null){
 
-                val serverItem = response.body()
+                val serverItem = body
 
                 val list = Session(context).todoList.items
                 val localIndex = list.indexOfFirst { item -> item.id == id }
@@ -129,12 +130,12 @@ object StorageController {
             //Update the remote copy
 
             val client = TodoListWebServiceClient.getClient(context)
-            val (response, success) = performBlockingNetworkCall(client.updateTodoItemById(todoItem.id))
+            val (body, success) = performBlockingNetworkCall(client.updateTodoItemById(todoItem.id, todoItem))
 
             return StorageControllerResult(
                     data = Unit,
                     networkCall = true,
-                    success = success && response != null && response.body() != null
+                    success = success && body != null
             )
         }
     }
@@ -160,10 +161,10 @@ object StorageController {
 
             //Delete the remote copy.
             val client = TodoListWebServiceClient.getClient(context)
-            val (response, success) = performBlockingNetworkCall(client.deleteTodoItemById(item.id))
+            val (body, success) = performBlockingNetworkCall(client.deleteTodoItemById(item.id))
 
-            if (success && response != null && response.body() != null){
-                Session(context).todoList = response.body()
+            if (success && body != null){
+                Session(context).todoList = body
                 return StorageControllerResult(data = Unit, networkCall = true, success = true)
             } else {
                 return StorageControllerResult(data = Unit, networkCall = true, success = false)
@@ -185,10 +186,10 @@ object StorageController {
 
 
             val client = TodoListWebServiceClient.getClient(context)
-            val (response, success) = performBlockingNetworkCall(client.postNewTodoItemToList(todoItem))
+            val (body, success) = performBlockingNetworkCall(client.postNewTodoItemToList(todoItem))
 
-            if (success && response != null && response.body() != null) {
-                Session(context).todoList = response.body()
+            if (success && body != null) {
+                Session(context).todoList = body
                 return StorageControllerResult(data = Unit, networkCall = true, success = true)
             } else {
                 return StorageControllerResult(data = Unit, networkCall = true, success = false)
@@ -197,13 +198,13 @@ object StorageController {
     }
 
 
-    fun <T> performBlockingNetworkCall(method : Call<T>) : Pair<Response<T>?, Boolean>{
+    fun <T> performBlockingNetworkCall(method : Call<T>) : Pair<T?, Boolean>{
         return TodoListWebServiceClient.performBlockingNetworkCall(TAG, method)
     }
 
-    fun <T> performAsyncNetworkCall (method : Call<T>) {
-
-    }
+//    fun <T> performAsyncNetworkCall (method : Call<T>) {
+//
+//    }
 
 
 

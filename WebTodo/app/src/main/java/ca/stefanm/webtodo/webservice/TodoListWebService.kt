@@ -51,7 +51,7 @@ interface TodoListWebService {
 
     //Update
     @PUT("todo/{id}")
-    fun updateTodoItemById(@Path("id") id : Int) : Call<TodoItem>
+    fun updateTodoItemById(@Path("id") id : Int, @Body todoItem: TodoItem) : Call<TodoItem>
 
     /* Deletion.*/
     @DELETE("todo/{id}")

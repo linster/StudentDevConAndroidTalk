@@ -13,22 +13,21 @@ interface IWebServiceClient<T> {
 
     fun getClient(context: Context) : T
 
-    fun <T> performBlockingNetworkCall(tag: String, method : Call<T>) : Pair<Response<T>?, Boolean> {
+    fun <T> performBlockingNetworkCall(tag: String, method : Call<T>) : Pair<T?, Boolean> {
+
         try {
 
-            val response = method.execute()
+            val response : Response<T> = method.execute()
 
-            if (response != null && response.isSuccessful){
-                return Pair(response, true)
-            } else {
-                Log.d(tag, "Response was not successful. Response: ${response.toString()}")
-                return Pair(response, false)
-            }
+            return Pair(response.body(), response.isSuccessful)
         } catch (e : IOException){
-            Log.d(tag, "Error talking to server. No network?")
+            Log.d(tag, "Error talking to server. Exception message: ${e} \t ${e.message}")
+            throw e
             return Pair(null, false)
-        } catch (e :RuntimeException){
-            Log.d(tag, "Error preparing request/response. \n ${e.message}")
+        } catch (e : RuntimeException){
+            Log.e(tag, e.toString())
+            Log.d(tag, "Error preparing request/response. \n Exception message: ${e.message} \n")
+            throw e;
             return Pair(null, false)
         }
 
