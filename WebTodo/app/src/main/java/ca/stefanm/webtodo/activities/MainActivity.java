@@ -1,6 +1,7 @@
 package ca.stefanm.webtodo.activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         new FetchListTask().execute();
 
-    }
+}
 
 
     @BindView(R.id.lv_todoList)
@@ -95,13 +96,19 @@ public class MainActivity extends AppCompatActivity {
 
 
     @OnItemClick(R.id.lv_todoList)
-    void onTodoItemClick(int position){
-
+    void onTodoItemClick(int position, long id){
+        Intent startEditorIntent = new Intent(this, EditTodoItemPopupActivity.class);
+        startEditorIntent.putExtra("itemid", todoItemListAdapter.getItem(position).getId());
+        startActivity(startEditorIntent);
     }
 
     @OnItemLongClick(R.id.lv_todoList)
     boolean onTodoItemLongClick(int position){
+        Log.d(TAG, "Lpos:" + position);
         return true;
+
+        //Contextual action bar?
+
     }
 
 
@@ -113,15 +120,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-//Main Activity has a list of TodoItems.
-
-
 
 //Todo item editor is in a Dialog (or a small activity with explicit intent?)
 
+//TODO Menu
+//Menu Item to take bitmap of todo list. (Service)
 
-//Menu item in a todo list to show the dialog showing collaborators.
 
-//Menu Item to take bitmap of todo list.
-
-//Pull-down to refresh (grab code from SayHi for that one)
+//TODO Pull-down to refresh (grab code from SayHi for that one)

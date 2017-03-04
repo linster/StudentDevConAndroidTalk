@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import ca.stefanm.webtodo.R;
 import ca.stefanm.webtodo.models.TodoItem;
+import hugo.weaving.DebugLog;
 
 /**
  * The Array Adapter is one of the ways to populate a ListView.
@@ -45,7 +47,7 @@ public class TodoItemListAdapter extends ArrayAdapter<TodoItem> {
     public View getView(int position, View convertView, ViewGroup parent){
 
         //Get the data to
-        TodoItem todoItem = getItem(position);
+        final TodoItem todoItem = getItem(position);
 
         //Little bit of magic to get a layout that we can populate.
         if (convertView == null){
@@ -70,6 +72,15 @@ public class TodoItemListAdapter extends ArrayAdapter<TodoItem> {
         cb_completed.setChecked(todoItem.getCompleted());
 
         tv_contents_short.setText(todoItem.getContents());
+
+        cb_completed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                todoItem.setCompleted(isChecked);
+            }
+        });
+
+
 
         return convertView;
     }

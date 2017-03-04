@@ -9,7 +9,6 @@
     <string name="api_url">http://10.0.2.2:8000/</string>
 
 
-
     <string name="todoitem_default_date">Jan 01, 1970</string>
     <string name="todoitem_default_username">Username</string>
     <string name="todoitem_default_short_contents">TextView</string>

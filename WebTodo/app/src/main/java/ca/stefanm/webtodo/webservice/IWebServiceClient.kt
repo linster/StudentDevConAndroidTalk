@@ -22,12 +22,24 @@ interface IWebServiceClient<T> {
             return Pair(response.body(), response.isSuccessful)
         } catch (e : IOException){
             Log.d(tag, "Error talking to server. Exception message: ${e} \t ${e.message}")
-            throw e
+
+            //You may want to uncomment this for debugging to get a full stack trace. In the
+            //real world, it's typically bad to have the app crash due to a failed web request.
+            // (what if the user just didn't have data that instant?).
+            //
+            //throw e
+
             return Pair(null, false)
         } catch (e : RuntimeException){
             Log.e(tag, e.toString())
             Log.d(tag, "Error preparing request/response. \n Exception message: ${e.message} \n")
-            throw e;
+
+            //You may want to uncomment this for debugging to get a full stack trace. In the
+            //real world, it's typically bad to have the app crash due to a failed web request.
+            // (what if the user just didn't have data that instant?).
+            //
+            //throw e;
+
             return Pair(null, false)
         }
 
