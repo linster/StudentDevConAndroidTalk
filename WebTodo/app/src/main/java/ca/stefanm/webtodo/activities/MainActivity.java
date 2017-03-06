@@ -55,10 +55,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.lv_todoList)
     ListView todoListView;
 
-
     TodoItemListAdapter todoItemListAdapter;
-
-
 
 
     class FetchListTask extends AsyncTask<Void, Void, StorageController.StorageControllerResult<TodoList>> {

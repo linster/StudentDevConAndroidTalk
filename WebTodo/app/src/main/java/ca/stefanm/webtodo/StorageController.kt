@@ -111,7 +111,7 @@ object StorageController {
 //    }
 
     //Return whether update to server was successful
-    fun updateTodoItemById(context: Context, id: Int, todoItem: TodoItem) : StorageControllerResult<Unit>{
+    fun updateTodoItem(context: Context, todoItem: TodoItem) : StorageControllerResult<Unit>{
 
         if (!hasNetwork(context)){
             // Let's not allow the user to modify the list if not connected to the network.
@@ -119,7 +119,7 @@ object StorageController {
         } else {
             //Update the local copy of the item
             var list = Session(context).todoList.items
-            val index = list.indexOfFirst { item -> item.id == id }
+            val index = list.indexOfFirst { item -> item.id == todoItem.id }
 
             if (index == -1){
                 return StorageControllerResult(data = Unit, networkCall = false, success = false)

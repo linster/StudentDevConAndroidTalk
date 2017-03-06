@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import ca.stefanm.webtodo.R;
+import ca.stefanm.webtodo.StorageController;
 import ca.stefanm.webtodo.models.TodoItem;
 import hugo.weaving.DebugLog;
 
@@ -77,6 +78,15 @@ public class TodoItemListAdapter extends ArrayAdapter<TodoItem> {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 todoItem.setCompleted(isChecked);
+                //TODO
+                //Opportunity for extension!
+                //If the call fails, on the UI thread show a toast.
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        StorageController.INSTANCE.updateTodoItem(TodoItemListAdapter.this.getContext(), todoItem);
+                    }
+                }).start();
             }
         });
 
