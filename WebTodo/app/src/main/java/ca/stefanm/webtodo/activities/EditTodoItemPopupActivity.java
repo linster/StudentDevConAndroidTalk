@@ -22,6 +22,7 @@ import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import ca.stefanm.webtodo.R;
 import ca.stefanm.webtodo.StorageController;
+import ca.stefanm.webtodo.localstorage.Session;
 import ca.stefanm.webtodo.models.TodoItem;
 import hugo.weaving.DebugLog;
 import kotlin.Unit;
@@ -44,7 +45,12 @@ public class EditTodoItemPopupActivity extends AppCompatActivity {
 
         mContext = this;
 
-        new LoadItemTask(getIntent().getIntExtra("itemid", 0)).execute();
+        int id = getIntent().getIntExtra("itemid", 0);
+        if (id != 0) {
+            new LoadItemTask(id).execute();
+        } else {
+            currentlyEditedTodoItem = new TodoItem(0, false, "", 0, new Session(this).getCurrentUser());
+        }
     }
 
     TodoItem currentlyEditedTodoItem = null;
@@ -102,11 +108,12 @@ public class EditTodoItemPopupActivity extends AppCompatActivity {
         protected StorageController.StorageControllerResult<TodoItem> doInBackground(Void... params){
             int id = mId;
             Log.d(TAG, "Id: " + id);
+
             StorageController.StorageControllerResult<TodoItem> fetchResult =
                     StorageController.INSTANCE.getTodoItemById(mContext, id);
-
             Log.d(TAG, "Fetch result: " + fetchResult);
             return fetchResult;
+
         }
 
         @Override
@@ -178,7 +185,7 @@ public class EditTodoItemPopupActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            loadingDialog = ProgressDialog.show(mContext, "Loading", "Fetching TODO Item...");
+            loadingDialog = ProgressDialog.show(EditTodoItemPopupActivity.this, "Loading", "Saving TODO Item...");
         }
 
         @Override
@@ -208,8 +215,9 @@ public class EditTodoItemPopupActivity extends AppCompatActivity {
                         })
                         .create()
                         .show();
+            } else {
+                finish();
             }
-            finish();
         }
 
     }

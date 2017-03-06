@@ -15,6 +15,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnItemClick;
 import butterknife.OnItemLongClick;
 import ca.stefanm.webtodo.R;
@@ -109,6 +110,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @OnClick(R.id.btn_float_add)
+    void addItem(){
+
+        Intent startEditorIntent = new Intent(this, EditTodoItemPopupActivity.class);
+        startEditorIntent.putExtra("itemid", 0);
+        startActivity(startEditorIntent);
+
+    }
 
 
 }

@@ -11,7 +11,7 @@
 
     <string name="todoitem_default_date">Jan 01, 1970</string>
     <string name="todoitem_default_username">Username</string>
-    <string name="todoitem_default_short_contents">TextView</string>
+    <string name="todoitem_default_short_contents"></string>
     <string name="completed">Completed?</string>
     <string name="save">Save</string>
     <string name="trashcan_icon_desc">Trash Can</string>
