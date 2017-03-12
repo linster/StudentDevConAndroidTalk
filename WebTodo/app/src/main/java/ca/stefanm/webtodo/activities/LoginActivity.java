@@ -127,6 +127,9 @@ public class LoginActivity extends AppCompatActivity {
                         .show();
             } else {
                 setSuccessResult();
+
+
+
                 finish();
             }
 

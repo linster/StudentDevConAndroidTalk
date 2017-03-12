@@ -10,8 +10,7 @@ var u = require('underscore')
 
 //Simulates what you would store in the database for user credentials
 var userStorage = [
-    {id: 0, username: "boris", password: "", authToken: ""},
-    {id: 1, username: "jim", password: "", authToken: ""}
+    //{id: 0, username: "", password: "", authToken: ""}
 ]
 
 
@@ -24,7 +23,13 @@ app.post('/login', function(req, res){
     var reqpass = auth[1]
 
 
-    var userRecord = u.filter(userStorage, function(user) { return user.username === requser})[0] //Edge case!!! What if two users have the same username?
+    var userRecord = u.filter(userStorage, function(user) { return user.user === requser})[0] //Edge case!!! What if two users have the same username?
+
+
+    if (!userRecord || userRecord == undefined){
+        res.sendStatus(401);
+        return;
+    }
 
     bcrypt.compare(reqpass, userRecord.password, function(err, result){
 
@@ -61,7 +66,7 @@ app.post('/login/register', function(req, res){
             res.json({})
         }
 
-        var newUser = {id: maxId + 1, user: user, password: hash, authToken: hash + new Date().getTime() };
+        var newUser = {id: maxId + 1, user: user, password: hash, authToken: user + hash + new Date().getTime() };
 
         userStorage.push(newUser);
 
@@ -74,9 +79,25 @@ app.post('/login/register', function(req, res){
 })
 
 
-var isAuthenticatedMiddleware = function(req, res) {
+var isAuthenticatedMiddleware = function(req, res, next) {
 
 
+    var rawAuthHeader = req.headers['authorization']
+    if (!rawAuthHeader || rawAuthHeader == undefined){
+        res.sendStatus(401)
+        return;
+    }
+
+
+    var token = rawAuthHeader.replace('Basic ', "")
+
+    var user = u.find(userStorage, function(u) { return u.authToken === token})
+
+    if (user){
+        next()
+    } else {
+        res.send(401)
+    }
 
 
 }

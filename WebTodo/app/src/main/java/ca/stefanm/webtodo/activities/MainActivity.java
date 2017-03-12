@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemClick;
 import butterknife.OnItemLongClick;
+import ca.stefanm.webtodo.ListToGalleryIntentService;
 import ca.stefanm.webtodo.R;
 import ca.stefanm.webtodo.StorageController;
 import ca.stefanm.webtodo.adapters.TodoItemListAdapter;
@@ -51,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
 
         todoListView.setAdapter(todoItemListAdapter);
 
+        if (warningNoLoginDialog != null && warningNoLoginDialog.isShowing()){
+            warningNoLoginDialog.dismiss();
+        }
+
         String authToken = new Session(getApplicationContext()).getCurrentUser().getAuthToken();
 
         if ( TextUtils.isEmpty(authToken) ) {
@@ -61,6 +68,49 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onPause() {
+
+        if (warningNoLoginDialog != null && warningNoLoginDialog.isShowing()){
+            warningNoLoginDialog.dismiss();
+        }
+
+        super.onPause();;
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.mainactivitymenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem){
+
+        int id = menuItem.getItemId();
+
+        switch (id){
+            case R.id.menu_refresh:
+                new FetchListTask().execute();
+                break;
+            case R.id.menu_logout:
+                //Set an empty user
+                (new Session(this)).setCurrentUser(new User("", ""));
+                todoItemListAdapter.clear();
+                todoItemListAdapter.notifyDataSetChanged();
+                showLoginWarningDialog();
+                break;
+            case R.id.menu_list_to_image:
+                //Intent service to take the whole list into a picture and save it to the gallery.
+                Intent startPictureServiceIntent = new Intent(this, ListToGalleryIntentService.class);
+                startService(startPictureServiceIntent);
+                break;
+        }
+
+
+        return super.onOptionsItemSelected(menuItem);
+    }
 
     
 
@@ -114,23 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 case LoginActivity.RESULT_REGISTRATION_OK:
                     new FetchListTask().execute();
                 default:
-                    new AlertDialog.Builder(this)
-                            .setTitle("Login or Registration Failed.")
-                            .setMessage("You must login or register to use this application.")
-                            .setPositiveButton("Login", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent startLoginActivity = new Intent(MainActivity.this, LoginActivity.class);
-                                    startActivityForResult(startLoginActivity, LOGIN_REQ);
-                                }
-                            })
-                            .setNegativeButton("Close Application", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    finish();
-                                }
-                            })
-                            .show();
+                    showLoginWarningDialog();
             }
         }
     }
@@ -157,13 +191,44 @@ public class MainActivity extends AppCompatActivity {
     void addItem(){
 
         Intent startEditorIntent = new Intent(this, EditTodoItemPopupActivity.class);
-        startEditorIntent.putExtra("itemid", 0);
+        startEditorIntent.putExtra("itemid", -1);
         startActivity(startEditorIntent);
-
     }
 
 
+    private AlertDialog warningNoLoginDialog;
+
+    private void showLoginWarningDialog(){
+        warningNoLoginDialog = new AlertDialog.Builder(this)
+                .setTitle("Unauthorized")
+                .setMessage("You must login or register to use this application.")
+                .setPositiveButton("Login", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent startLoginActivity = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivityForResult(startLoginActivity, LOGIN_REQ);
+                    }
+                })
+                .setNegativeButton("Close Application", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                }).show();
+    }
+
+
+
+
+
+
+
 }
+
+
+
+
+
 
 //Could do a todo item editor activity via explicit intent.
 

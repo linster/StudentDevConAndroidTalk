@@ -15,4 +15,7 @@
     <string name="completed">Completed?</string>
     <string name="save">Save</string>
     <string name="trashcan_icon_desc">Trash Can</string>
+    <string name="menu_logout">Logout</string>
+    <string name="menu_save_list_as_picture">Save List as Picture</string>
+    <string name="menu_refresh">Refresh</string>
 </resources>

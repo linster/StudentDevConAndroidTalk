@@ -12,7 +12,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
 
-require('./login.js');
+login = require('./login.js');
 
 console.log('Setting up API server.')
 
@@ -36,7 +36,7 @@ function TodoItem(
 
 todoList = []
 
-app.post('/todo/new', function(req, res){
+app.post('/todo/new', login.authMiddleware,  function(req, res){
 
     //We need to assign an ID number to the new todo item.
 
@@ -54,17 +54,17 @@ app.post('/todo/new', function(req, res){
 
 })
 
-app.get('/todo/', function(req, res){
+app.get('/todo/', login.authMiddleware, function(req, res){
     res.json(todoList)
 })
 
-app.get('/todo/:id', function(req, res){
+app.get('/todo/:id', login.authMiddleware, function(req, res){
     var id = req.params.id;
 
-    res.json(u.find(todoList, function(item){return item.id == id}))
+    res.json(u.find(todoList, login.authMiddleware, function(item){return item.id == id}))
 })
 
-app.put('/todo/:id', function(req, res){
+app.put('/todo/:id', login.authMiddleware, function(req, res){
     var id = req.params.id;
 
     var index = u.indexOf(todoList, u.find(todoList, function(item){return item.id == id}))
@@ -73,7 +73,7 @@ app.put('/todo/:id', function(req, res){
     res.json({items: todoList})
 })
 
-app.delete('/todo/:id', function(req, res){
+app.delete('/todo/:id', login.authMiddleware, function(req, res){
     var id = req.params.id;
 
     var index = u.indexOf(todoList, u.find(todoList, function(item){return item.id == id}))

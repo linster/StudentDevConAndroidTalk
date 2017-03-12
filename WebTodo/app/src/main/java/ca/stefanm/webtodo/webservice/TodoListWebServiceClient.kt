@@ -35,7 +35,7 @@ object TodoListWebServiceClient : IWebServiceClient<TodoListWebService>{
                                 val request = chain.request()
                                 val newReq = request.newBuilder()
                                         /* Add the JWT to the request header */
-                                        .addHeader("Authorization ",
+                                        .addHeader("Authorization",
                                                 "Basic " + (Session(context).currentUser.authToken ?: "Og==") /* base64encode(":") */)
                                         .build()
                                 val response = chain.proceed(newReq)

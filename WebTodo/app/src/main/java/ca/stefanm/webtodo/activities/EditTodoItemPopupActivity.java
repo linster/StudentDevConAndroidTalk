@@ -45,8 +45,8 @@ public class EditTodoItemPopupActivity extends AppCompatActivity {
 
         mContext = this;
 
-        int id = getIntent().getIntExtra("itemid", 0);
-        if (id != 0) {
+        int id = getIntent().getIntExtra("itemid", -1);
+        if (id != -1) {
             new LoadItemTask(id).execute();
         } else {
             currentlyEditedTodoItem = new TodoItem(0, false, "", 0, new Session(this).getCurrentUser());
