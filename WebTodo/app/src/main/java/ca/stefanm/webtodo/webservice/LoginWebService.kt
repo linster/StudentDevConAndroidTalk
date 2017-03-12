@@ -33,7 +33,7 @@ interface LoginWebService {
     //LoginActivity for Logging in. Sends a request with username/pass in headers to login endpoint,
 //gets back JWT that is to be sent on future requests.
 
-    @PUT("login/")
+    @POST("login/")
     fun loginExistingUser(@Body user: User) : Call<User>
 
 }

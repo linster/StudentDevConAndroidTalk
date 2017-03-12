@@ -1,6 +1,9 @@
 package ca.stefanm.webtodo.activities;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.EditText;
@@ -12,6 +15,7 @@ import butterknife.OnItemClick;
 import ca.stefanm.webtodo.R;
 import ca.stefanm.webtodo.models.User;
 import ca.stefanm.webtodo.webservice.LoginWebServiceClient;
+import retrofit2.Call;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -33,14 +37,26 @@ public class LoginActivity extends AppCompatActivity {
     public void login(){
 
         User user = new User(username.getText().toString(), "");
-        LoginWebServiceClient.INSTANCE.loginExistingUser(this, user, password.getText().toString());
+        new LoginTask(user, password.getText().toString()).execute();
     }
 
     @OnClick(R.id.b_register)
     public void register() {
         User user = new User(username.getText().toString(), "");
-        LoginWebServiceClient.INSTANCE.registerNewUser(this, user, password.getText().toString());
+        new RegisterTask(user, password.getText().toString()).execute();
     }
+
+    @Override
+    public void onBackPressed(){
+        setResult(RESULT_LOGINFAIL);
+        super.onBackPressed();
+    }
+
+
+    public static final int RESULT_LOGGEDIN = 0;
+    public static final int RESULT_LOGINFAIL = 1;
+    public static final int RESULT_REGISTRATION_OK = 2;
+    public static final int RESULT_REGISTRATION_FAIL = 3;
 
     /**
      * An AsyncTask is conceptually similar to a thread, except for the fact that all AsyncTasks
@@ -56,23 +72,113 @@ public class LoginActivity extends AppCompatActivity {
      * using this in the field!!). Those endpoints then return a JSON Web Token (JWT) which is used
      * to authenticate with the todolist api for all future calls.
      */
-    protected abstract class AbstractAuthenticationTask extends AsyncTask<Void, Void, Void>{
+    protected abstract class AbstractAuthenticationTask extends AsyncTask<Void, Void, Boolean>{
+
+        protected String progressMessage;
+        protected String failMessage;
+
+        protected User mUser;
+        protected String mPassword;
+
+        private ProgressDialog mProgressDialog;
+
+        AbstractAuthenticationTask( User user,
+                String password,
+                String progressMessage,
+                String failMessage){
+            this.progressMessage = progressMessage;
+            this.failMessage = failMessage;
+            this.mUser = user;
+            this.mPassword = password;
+        }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected void onPreExecute(){
 
-            //Be sure to put up a loading dialog spinner here.
+            mProgressDialog = ProgressDialog.show(LoginActivity.this, "Loading", progressMessage);
 
-            return null;
         }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            return doWebRequest(mUser, mPassword);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result){
+
+
+            if (!LoginActivity.this.isFinishing()
+                    && mProgressDialog.isShowing()){
+                mProgressDialog.dismiss();
+            }
+
+            if (!result ){
+                new AlertDialog.Builder(LoginActivity.this)
+                        .setMessage(failMessage)
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                setFailResult();
+                                finish();
+                            }
+                        })
+                        .create()
+                        .show();
+            } else {
+                setSuccessResult();
+                finish();
+            }
+
+        }
+
+        abstract boolean doWebRequest(User user, String password);
+        abstract void setSuccessResult();
+        abstract void setFailResult();
     }
 
     protected class LoginTask extends AbstractAuthenticationTask {
 
+        LoginTask(User user, String password) {
+            super(user, password, "Logging in", "Login failed.");
+        }
+
+        @Override
+        boolean doWebRequest(User user, String password) {
+            return LoginWebServiceClient.INSTANCE.loginExistingUser(LoginActivity.this, user, password);
+        }
+
+        @Override
+        void setSuccessResult() {
+            setResult(RESULT_LOGGEDIN);
+        }
+
+        @Override
+        void setFailResult() {
+            setResult(RESULT_LOGINFAIL);
+        }
     }
 
     protected class RegisterTask extends AbstractAuthenticationTask {
 
+        RegisterTask(User user, String password) {
+            super(user, password, "Registering", "Registration failed.");
+        }
+
+        @Override
+        boolean doWebRequest(User user, String password) {
+            return LoginWebServiceClient.INSTANCE.registerNewUser(LoginActivity.this, user , password);
+        }
+
+        @Override
+        void setSuccessResult() {
+            setResult(RESULT_REGISTRATION_OK);
+        }
+
+        @Override
+        void setFailResult() {
+            setResult(RESULT_REGISTRATION_FAIL);
+        }
     }
 }
 

@@ -36,35 +36,31 @@ object LoginWebServiceClient : IWebServiceClient<LoginWebService> {
 
             if (returnedUser != null){
                 Session(context).currentUser = returnedUser
-                Toast.makeText(context, "User registration & login successful.", Toast.LENGTH_SHORT).show()
                 return true
             } else {
                 return false
             }
         } else {
             Log.d(TAG, "User registration failed: Response:" + body?.toString())
-            Toast.makeText(context, "User registration failed.", Toast.LENGTH_SHORT).show()
             return false
         }
     }
 
     public fun loginExistingUser(context: Context, user: User, enteredPassword : String) : Boolean{
 
-        val (body, success) = performBlockingNetworkCall(TAG, getClient(context, userpassTob64Header(user.username, enteredPassword)).registerNewUser(user) )
+        val (body, success) = performBlockingNetworkCall(TAG, getClient(context, userpassTob64Header(user.username, enteredPassword)).loginExistingUser(user) )
 
         if (success && body != null){
             val returnedUser = body
 
             if (returnedUser != null){
                 Session(context).currentUser = returnedUser
-                Toast.makeText(context, "User login successful.", Toast.LENGTH_SHORT).show()
                 return true
             } else {
                 return false
             }
         } else {
             Log.d(TAG, "User login failed: Response:" + body?.toString())
-            Toast.makeText(context, "User login failed.", Toast.LENGTH_SHORT).show()
             return false
         }
 
@@ -74,7 +70,7 @@ object LoginWebServiceClient : IWebServiceClient<LoginWebService> {
     private fun userpassTob64Header(username : String, password : String) : String{
         return Base64.encodeToString(
                 (username + ":" + password).toByteArray(Charset.defaultCharset()),
-                Base64.URL_SAFE
+                Base64.NO_WRAP
         )
     }
 
@@ -94,7 +90,7 @@ object LoginWebServiceClient : IWebServiceClient<LoginWebService> {
                             val request = chain.request()
                             val newReq = request.newBuilder()
                                     /* Add the JWT to the request header */
-                                    .addHeader("Authorization ",
+                                    .addHeader("Authorization",
                                             "Basic " + basicAuthHeader)
                                     .build()
                             val response = chain.proceed(newReq)

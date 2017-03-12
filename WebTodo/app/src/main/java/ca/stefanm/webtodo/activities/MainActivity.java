@@ -1,10 +1,13 @@
 package ca.stefanm.webtodo.activities;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -48,10 +51,21 @@ public class MainActivity extends AppCompatActivity {
 
         todoListView.setAdapter(todoItemListAdapter);
 
-        new FetchListTask().execute();
+        String authToken = new Session(getApplicationContext()).getCurrentUser().getAuthToken();
 
-}
+        if ( TextUtils.isEmpty(authToken) ) {
+            Intent startLoginActivity = new Intent(this, LoginActivity.class);
+            startActivityForResult(startLoginActivity, LOGIN_REQ);
+        } else {
+            new FetchListTask().execute();
+        }
+    }
 
+
+    
+
+
+    public static int LOGIN_REQ = 1;
 
     @BindView(R.id.lv_todoList)
     ListView todoListView;
@@ -91,6 +105,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+
+        if (requestCode == LOGIN_REQ){
+            switch (resultCode){
+                case LoginActivity.RESULT_LOGGEDIN:
+                case LoginActivity.RESULT_REGISTRATION_OK:
+                    new FetchListTask().execute();
+                default:
+                    new AlertDialog.Builder(this)
+                            .setTitle("Login or Registration Failed.")
+                            .setMessage("You must login or register to use this application.")
+                            .setPositiveButton("Login", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent startLoginActivity = new Intent(MainActivity.this, LoginActivity.class);
+                                    startActivityForResult(startLoginActivity, LOGIN_REQ);
+                                }
+                            })
+                            .setNegativeButton("Close Application", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            })
+                            .show();
+            }
+        }
+    }
 
 
     @OnItemClick(R.id.lv_todoList)
