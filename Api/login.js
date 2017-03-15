@@ -96,6 +96,10 @@ var isAuthenticatedMiddleware = function(req, res, next) {
     if (user){
         next()
     } else {
+
+        console.log("Authentication failed. Provided token: " + token);
+        console.log("Existing user storage: " + us)
+
         res.send(401)
     }
 

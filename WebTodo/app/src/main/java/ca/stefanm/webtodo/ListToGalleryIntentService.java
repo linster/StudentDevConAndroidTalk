@@ -3,8 +3,29 @@ package ca.stefanm.webtodo;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.constraint.solver.widgets.Rectangle;
+import android.text.StaticLayout;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
+import ca.stefanm.webtodo.localstorage.Session;
+import ca.stefanm.webtodo.models.TodoItem;
 
 
 //TODO IntentService to take todolist -> bitmap and save in Gallery.
@@ -32,67 +53,90 @@ public class ListToGalleryIntentService extends IntentService {
         super("ListToGalleryIntentService");
     }
 
-    /**
-     * Starts this service to perform action Foo with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
-    public static void startActionFoo(Context context, String param1, String param2) {
-        Intent intent = new Intent(context, ListToGalleryIntentService.class);
-        intent.setAction(ACTION_FOO);
-        intent.putExtra(EXTRA_PARAM1, param1);
-        intent.putExtra(EXTRA_PARAM2, param2);
-        context.startService(intent);
-    }
 
-    /**
-     * Starts this service to perform action Baz with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
-    public static void startActionBaz(Context context, String param1, String param2) {
-        Intent intent = new Intent(context, ListToGalleryIntentService.class);
-        intent.setAction(ACTION_BAZ);
-        intent.putExtra(EXTRA_PARAM1, param1);
-        intent.putExtra(EXTRA_PARAM2, param2);
-        context.startService(intent);
-    }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        if (intent != null) {
-            final String action = intent.getAction();
-            if (ACTION_FOO.equals(action)) {
-                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-                handleActionFoo(param1, param2);
-            } else if (ACTION_BAZ.equals(action)) {
-                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-                handleActionBaz(param1, param2);
-            }
+
+        //Get input text.
+
+
+        List<TodoItem> itemList = new Session(this).getTodoList().getItems();
+
+        String imageText = "";
+
+        for (TodoItem item : itemList){
+            imageText += (item.getContents() + "\n");
         }
+
+        if (imageText.length() != 0) {
+            convertToImage(imageText, 20, 80);
+        }
+
     }
 
-    /**
-     * Handle action Foo in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionFoo(String param1, String param2) {
-        // TODO: Handle action Foo
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
 
-    /**
-     * Handle action Baz in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionBaz(String param1, String param2) {
-        // TODO: Handle action Baz
-        throw new UnsupportedOperationException("Not yet implemented");
+
+
+
+
+
+    private void convertToImage(String inputText, int fontSizePt, int maxLineLength){
+
+
+        //We want to take the input text
+
+        //http://stackoverflow.com/questions/9973048/convert-text-to-image-file-on-android
+
+
+
+        Paint textPaint = new Paint();
+        textPaint.setColor(Color.WHITE);
+        textPaint.setTextAlign(Paint.Align.LEFT);
+        textPaint.setTextSize(fontSizePt);
+        textPaint.setAntiAlias(true);
+
+        List<String> textLines = new ArrayList<>();
+
+        Collections.addAll(textLines, inputText.split("\n"));
+
+        Rect bounds = new Rect();
+
+        textPaint.getTextBounds(textLines.get(0), 0, textLines.get(0).length(), bounds);
+
+        Bitmap b = Bitmap.createBitmap(maxLineLength, textLines.size() * fontSizePt, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(b);
+
+        for (int i = 0; i < textLines.size(); i++) {
+            canvas.drawText(textLines.get(i), 0, i * bounds.height(), textPaint);
+        }
+
+        FileOutputStream fos;
+
+        File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath(), "todo_" + new Date().getTime());
+
+        try {
+            fos = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        b.compress(Bitmap.CompressFormat.PNG, 80, fos);
+
+        try {
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+
+        Uri contentUri = Uri.fromFile(file);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+
     }
 }

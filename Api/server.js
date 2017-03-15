@@ -61,7 +61,7 @@ app.get('/todo/', login.authMiddleware, function(req, res){
 app.get('/todo/:id', login.authMiddleware, function(req, res){
     var id = req.params.id;
 
-    res.json(u.find(todoList, login.authMiddleware, function(item){return item.id == id}))
+    res.json(u.find(todoList, function(item){return item.id == id}))
 })
 
 app.put('/todo/:id', login.authMiddleware, function(req, res){
