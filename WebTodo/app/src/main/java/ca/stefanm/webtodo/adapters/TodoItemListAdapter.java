@@ -91,7 +91,7 @@ public class TodoItemListAdapter extends ArrayAdapter<TodoItem> {
         });
 
 
-
+        //Populate views here
         return convertView;
     }
 
