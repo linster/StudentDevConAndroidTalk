@@ -8,20 +8,18 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
-import butterknife.OnEditorAction;
-import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
 import ca.stefanm.webtodo.R;
 import ca.stefanm.webtodo.StorageController;
+import ca.stefanm.webtodo.ToDoListGPS;
 import ca.stefanm.webtodo.localstorage.Session;
 import ca.stefanm.webtodo.models.TodoItem;
 import hugo.weaving.DebugLog;
@@ -49,7 +47,7 @@ public class EditTodoItemPopupActivity extends AppCompatActivity {
         if (id != -1) {
             new LoadItemTask(id).execute();
         } else {
-            currentlyEditedTodoItem = new TodoItem(0, false, "", 0, new Session(this).getCurrentUser());
+            currentlyEditedTodoItem = new TodoItem(0, false, "", 0, new Session(this).getCurrentUser(), 0L, 0L);
         }
     }
 
@@ -76,6 +74,14 @@ public class EditTodoItemPopupActivity extends AppCompatActivity {
     @OnClick(R.id.btn_delete)
     protected void deleteItem(){
         new DeleteItemTask().execute();
+    }
+
+    @OnClick(R.id.btn_get_location)
+    protected void getLocation(){
+        ToDoListGPS GPS = new ToDoListGPS(this);
+        currentlyEditedTodoItem.setGeoLat(GPS.getCurrentLocation().getLatitude());
+        currentlyEditedTodoItem.setGeoLng(GPS.getCurrentLocation().getLongitude());
+        Toast.makeText(mContext, "Location\nLat: " + GPS.getCurrentLocation().getLatitude() + "\nLng: " + GPS.getCurrentLocation().getLongitude(), Toast.LENGTH_SHORT).show();
     }
 
 

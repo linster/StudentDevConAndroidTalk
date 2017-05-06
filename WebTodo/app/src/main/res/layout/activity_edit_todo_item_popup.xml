@@ -37,7 +37,19 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/cb_completed" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_get_location"
+        android:layout_marginRight="16dp"
+        app:layout_constraintVertical_bias="0.505" />
+
+    <Button
+        android:text="@string/get_current_location"
+        android:layout_width="164dp"
+        android:layout_height="68dp"
+        android:id="@+id/btn_get_location"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/et_editTodoItem"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -48,9 +60,11 @@
         android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="45dp"
         app:layout_constraintTop_toBottomOf="@+id/cb_completed"
-        android:contentDescription="@string/trashcan_icon_desc" />
+        android:contentDescription="@string/trashcan_icon_desc"
+        android:layout_marginLeft="16dp"
+        app:layout_constraintVertical_bias="0.512" />
 
     <CheckBox
         android:text="@string/completed"
