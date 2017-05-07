@@ -1,6 +1,7 @@
 package ca.stefanm.webtodo.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,14 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.w3c.dom.Text;
 
@@ -31,7 +40,7 @@ import hugo.weaving.DebugLog;
  * Android can put into the ListView.
  */
 
-public class TodoItemListAdapter extends ArrayAdapter<TodoItem> {
+public class TodoItemListAdapter extends ArrayAdapter<TodoItem> implements OnMapReadyCallback{
     /**
      * Constructor
      *
@@ -90,9 +99,34 @@ public class TodoItemListAdapter extends ArrayAdapter<TodoItem> {
             }
         });
 
+        MapView mapView = (MapView) convertView.findViewById(R.id.mapView);
+        mapView.getMapAsync(this);
+        /*
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                //LatLng location = new LatLng(todoItem.getGeoLat(), todoItem.getGeoLng());
+                //LatLng location = new LatLng(-34, 151);
+                //googleMap.addMarker(new MarkerOptions().position(location));
+                //googleMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+                //googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+                //googleMap.getUiSettings().setAllGesturesEnabled(false);
+                Log.e("CalledBack", "CalledBack");
+            }
+        });*/
 
         //Populate views here
         return convertView;
+    }
+
+    // Copy pasted code from Google tutorial
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+        LatLng sydney = new LatLng(-34, 151);
+        googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
 }

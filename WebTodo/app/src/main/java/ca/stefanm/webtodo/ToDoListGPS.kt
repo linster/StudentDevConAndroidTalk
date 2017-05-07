@@ -23,6 +23,8 @@ class ToDoListGPS : LocationListener {
 
     private var currentLocation: Location? = null
 
+    private var isNull = true
+
     constructor(activity: Activity){
         locationManager = activity.getSystemService(LOCATION_SERVICE) as LocationManager
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -31,6 +33,7 @@ class ToDoListGPS : LocationListener {
             ActivityCompat.requestPermissions(activity, PERMISSIONS, PERMISSION_ALL)
             return
         }
+        isNull = false
         locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 MIN_UPDATES_TIME,
@@ -55,5 +58,9 @@ class ToDoListGPS : LocationListener {
 
     fun getCurrentLocation(): Location?{
         return currentLocation
+    }
+
+    fun isNull() : Boolean{
+        return isNull
     }
 }

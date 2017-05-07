@@ -79,6 +79,9 @@ public class EditTodoItemPopupActivity extends AppCompatActivity {
     @OnClick(R.id.btn_get_location)
     protected void getLocation(){
         ToDoListGPS GPS = new ToDoListGPS(this);
+        if(GPS.isNull()){
+            return;
+        }
         currentlyEditedTodoItem.setGeoLat(GPS.getCurrentLocation().getLatitude());
         currentlyEditedTodoItem.setGeoLng(GPS.getCurrentLocation().getLongitude());
         Toast.makeText(mContext, "Location\nLat: " + GPS.getCurrentLocation().getLatitude() + "\nLng: " + GPS.getCurrentLocation().getLongitude(), Toast.LENGTH_SHORT).show();
