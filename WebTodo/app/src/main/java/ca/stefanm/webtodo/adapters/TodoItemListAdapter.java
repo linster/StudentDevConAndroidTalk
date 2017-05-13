@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -17,6 +18,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -40,7 +42,7 @@ import hugo.weaving.DebugLog;
  * Android can put into the ListView.
  */
 
-public class TodoItemListAdapter extends ArrayAdapter<TodoItem> implements OnMapReadyCallback{
+public class TodoItemListAdapter extends ArrayAdapter<TodoItem>{
     /**
      * Constructor
      *
@@ -99,34 +101,20 @@ public class TodoItemListAdapter extends ArrayAdapter<TodoItem> implements OnMap
             }
         });
 
-        MapView mapView = (MapView) convertView.findViewById(R.id.mapView);
-        mapView.getMapAsync(this);
-        /*
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                //LatLng location = new LatLng(todoItem.getGeoLat(), todoItem.getGeoLng());
-                //LatLng location = new LatLng(-34, 151);
-                //googleMap.addMarker(new MarkerOptions().position(location));
-                //googleMap.moveCamera(CameraUpdateFactory.newLatLng(location));
-                //googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        ImageView mapView = (ImageView) convertView.findViewById(R.id.mapView);
 
-                //googleMap.getUiSettings().setAllGesturesEnabled(false);
-                Log.e("CalledBack", "CalledBack");
-            }
-        });*/
+        // Check to make sure a location has been set before showing the location.
+        if(todoItem.getGeoLat() != 0 && todoItem.getGeoLng() != 0){
+            String imageURL = "http://maps.googleapis.com/maps/api/staticmap?zoom=20&size=120x100&markers=size:mid|color:red|"
+                    + todoItem.getGeoLat()
+                    + ","
+                    + todoItem.getGeoLng()
+                    + "&sensor=false";
+            Picasso.with(convertView.getContext()).load(imageURL).into(mapView);
+        }
 
         //Populate views here
         return convertView;
-    }
-
-    // Copy pasted code from Google tutorial
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        LatLng sydney = new LatLng(-34, 151);
-        googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
 }
