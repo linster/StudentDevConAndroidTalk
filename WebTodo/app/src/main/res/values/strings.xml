@@ -18,4 +18,6 @@
     <string name="menu_logout">Logout</string>
     <string name="menu_save_list_as_picture">Save List as Picture</string>
     <string name="menu_refresh">Refresh</string>
+    <string name="get_current_location">Set Current Location</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

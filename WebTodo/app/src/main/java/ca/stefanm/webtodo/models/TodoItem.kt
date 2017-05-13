@@ -1,8 +1,6 @@
 package ca.stefanm.webtodo.models
 
 import android.support.annotation.Keep
-import com.squareup.moshi.FromJson
-import java.util.*
 
 /**
  * Created by Stefan on 1/30/2017.
@@ -16,5 +14,7 @@ data class TodoItem(
         var completed : Boolean = false,
         var contents : String = "",
         var modifiedOn : Long = 0L, /* Unix time stamp */
-        var creator : User
+        var creator : User,
+        var geoLat : Double = 0.0,
+        var geoLng : Double = 0.0
 )

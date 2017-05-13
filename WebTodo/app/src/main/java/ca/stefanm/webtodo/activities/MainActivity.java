@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
             warningNoLoginDialog.dismiss();
         }
 
-        super.onPause();;
+        super.onPause();
     }
 
 

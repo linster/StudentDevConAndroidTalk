@@ -1,13 +1,24 @@
 package ca.stefanm.webtodo.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -31,7 +42,7 @@ import hugo.weaving.DebugLog;
  * Android can put into the ListView.
  */
 
-public class TodoItemListAdapter extends ArrayAdapter<TodoItem> {
+public class TodoItemListAdapter extends ArrayAdapter<TodoItem>{
     /**
      * Constructor
      *
@@ -90,6 +101,17 @@ public class TodoItemListAdapter extends ArrayAdapter<TodoItem> {
             }
         });
 
+        ImageView mapView = (ImageView) convertView.findViewById(R.id.mapView);
+
+        // Check to make sure a location has been set before showing the location.
+        if(todoItem.getGeoLat() != 0 && todoItem.getGeoLng() != 0){
+            String imageURL = "http://maps.googleapis.com/maps/api/staticmap?zoom=20&size=120x100&markers=size:mid|color:red|"
+                    + todoItem.getGeoLat()
+                    + ","
+                    + todoItem.getGeoLng()
+                    + "&sensor=false";
+            Picasso.with(convertView.getContext()).load(imageURL).into(mapView);
+        }
 
         //Populate views here
         return convertView;
