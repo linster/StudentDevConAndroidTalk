@@ -32,10 +32,6 @@
             android:name=".activities.EditTodoItemPopupActivity"
             android:theme="@style/Theme.AppCompat.Dialog" />
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
-
     </application>
 
 </manifest>
