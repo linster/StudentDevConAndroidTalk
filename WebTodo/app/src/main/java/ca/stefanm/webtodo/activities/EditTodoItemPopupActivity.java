@@ -1,10 +1,13 @@
 package ca.stefanm.webtodo.activities;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -78,17 +81,41 @@ public class EditTodoItemPopupActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_get_location)
     protected void getLocation(){
-        ToDoListGPS GPS = new ToDoListGPS(this);
-        try{
-            currentlyEditedTodoItem.setGeoLat(GPS.getCurrentLocation().getLatitude());
-            currentlyEditedTodoItem.setGeoLng(GPS.getCurrentLocation().getLongitude());
-            Toast.makeText(mContext, "Location\nLat: " + GPS.getCurrentLocation().getLatitude() + "\nLng: " + GPS.getCurrentLocation().getLongitude(), Toast.LENGTH_SHORT).show();
-        }
-        catch (NullPointerException e){
-            return;
+        if(checkLocationPerms()){
+            ToDoListGPS GPS = new ToDoListGPS(this);
+            try{
+                currentlyEditedTodoItem.setGeoLat(GPS.getCurrentLocation().getLatitude());
+                currentlyEditedTodoItem.setGeoLng(GPS.getCurrentLocation().getLongitude());
+                Toast.makeText(mContext, "Location\nLat: " + GPS.getCurrentLocation().getLatitude() + "\nLng: " + GPS.getCurrentLocation().getLongitude(), Toast.LENGTH_SHORT).show();
+            }
+            catch (NullPointerException e){
+                return;
+            }
         }
     }
 
+    private boolean checkLocationPerms(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            String[] PERMISSIONS = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+            int PERMISSION_ALL = 1;
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            getLocation();
+
+        } else {
+            checkLocationPerms();
+        }
+        return;
+    }
 
     //TODO On editor defocus update model.
     @OnTextChanged(R.id.et_editTodoItem)

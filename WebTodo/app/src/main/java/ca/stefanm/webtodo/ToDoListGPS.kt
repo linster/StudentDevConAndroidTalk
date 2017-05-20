@@ -9,6 +9,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.widget.Toast
 
 
 class ToDoListGPS : LocationListener {
@@ -28,9 +29,7 @@ class ToDoListGPS : LocationListener {
     constructor(activity: Activity){
         locationManager = activity.getSystemService(LOCATION_SERVICE) as LocationManager
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            val PERMISSIONS = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
-            val PERMISSION_ALL = 1
-            ActivityCompat.requestPermissions(activity, PERMISSIONS, PERMISSION_ALL)
+            Toast(activity).setText("Permission Error")
             return
         }
         isNull = false
