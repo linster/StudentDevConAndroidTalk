@@ -53,7 +53,7 @@ internal object SharedPreferencesHelper {
             is Float    -> return sharedPreferences.getFloat(key, 0F)
             is Class<*> -> {
                 val moshi = Moshi.Builder().build()
-                return moshi.adapter(type).fromJson(sharedPreferences.getString(key, "{}"))
+                return moshi.adapter(type).fromJson(sharedPreferences.getString(key, "{}"))!!
             }
             else -> {
                     throw RuntimeException("type parameter was not a class!")
